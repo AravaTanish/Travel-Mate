@@ -1,0 +1,135 @@
+body {
+  font-family: "Plus Jakarta Sans", sans-serif !important;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.container {
+  flex: 1;
+}
+
+/* Navbar */
+.navbar {
+  background-color: white;
+  height: 5rem;
+}
+
+.navbar-brand i {
+  font-size: 2rem;
+  color: #fe424d;
+}
+
+.nav-link {
+  background-color: white !important;
+  color: #222222 !important;
+}
+
+/* Footer */
+.f-info-links a {
+  color: #222222;
+  text-decoration: none;
+}
+
+.f-info-links a:hover {
+  text-decoration: underline;
+}
+
+.f-info {
+  /* width: 100%; */
+  background-color: #ebebeb;
+  display: flex;
+  flex-direction: column;
+  height: 8rem;
+  justify-content: center;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.f-info div {
+  margin: 5px;
+}
+
+.f-info-social a {
+  text-decoration: none;
+  color: #222222;
+  font-size: 1.5rem;
+}
+
+/* Cards */
+.listing-card {
+  border: none !important;
+  margin-bottom: 2rem;
+}
+
+.card-img-top {
+  border-radius: 1rem !important;
+  width: 100% !important;
+  object-fit: cover !important;
+}
+
+.card-text {
+  font-weight: 400 !important;
+  color: #222222;
+}
+
+.card-click {
+  text-decoration: none;
+}
+
+/* New List Form */
+.add-btn {
+  width: 8rem;
+  background-color: #fe424d !important;
+  color: white !important;
+  border: none;
+}
+
+.add-btn:hover {
+  background-color: #ff606a !important;
+}
+
+/* Edit Form */
+.save-btn {
+  width: 10rem;
+  background-color: #fe424d !important;
+  color: white !important;
+  border: none;
+}
+
+.save-btn:hover {
+  background-color: #ff606a !important;
+}
+
+/* Show Page */
+.pad {
+  padding: 0 !important;
+}
+
+.show-img {
+  height: 50vh;
+}
+
+.btns {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.del-btn {
+  width: 10rem;
+  border: none;
+  margin: 0 1rem 1rem 1rem;
+}
+
+.edit-btn {
+  margin: 0 1rem 1rem 1rem;
+  width: 10rem;
+  background-color: #fe424d !important;
+  color: white !important;
+  border: none;
+}
+
+.edit-btn:hover {
+  background-color: #ff606a !important;
+}
