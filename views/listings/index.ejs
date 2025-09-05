@@ -1,8 +1,8 @@
 <% layout("/layouts/boilerplate.ejs") %>
 <h3 class="mb-3 mt-3">All Listings</h3>
-<div class="row row-col-lg-3 row-col-md-2 row-col-sm-1">
+<div class="row">
   <% for(let list of allListings) { %>
-  <div class="card listing-card" style="width: 27rem">
+  <div class="card listing-card col-lg-4 col-md-6 col-12 mb-4 mx-auto">
     <a class="card-click" href="/listings/<%= list._id %>">
       <img
         src="<%= list.image.url %>"
