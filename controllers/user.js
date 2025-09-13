@@ -26,16 +26,7 @@ function sendOTP(email, username, otpCode) {
     text: `Hello ${username}, your OTP is ${otpCode}. It will expire in 5 minutes.`,
   };
 
-  transporter.sendMail(mail, (error, info) => {
-    if (error) {
-      console.log("OTP error: ", error);
-      req.flash("error", "Failed to send OTP");
-      return res.redirect("/signup");
-    } else {
-      req.flash("success", "OTP sent to your email. Please verify.");
-      return res.redirect(`/verify?email=${email}`);
-    }
-  });
+  return transporter.sendMail(mail);
 }
 
 //Sign Up
@@ -53,6 +44,7 @@ module.exports.postSignup = async (req, res, next) => {
     const otpEntry = new OTP({ email: email, otp: otpCode });
     await otpEntry.save();
     sendOTP(email, username, otpCode);
+    return res.redirect(`/verify?email=${email}`);
   } catch (err) {
     req.flash("error", err.message);
     res.redirect("/signup");
@@ -72,14 +64,19 @@ module.exports.postLogin = async (req, res) => {
     await OTP.findOneAndDelete({ email });
     const otpEntry = new OTP({ email: email, otp: otpCode });
     await otpEntry.save();
-    req.logout((err) => {
+    req.logout(async (err) => {
       if (err) {
         return next(err);
       }
-      req.flash("error", "Please verify your email before logging in.");
-
-      sendOTP(email, username, otpCode);
-      return res.redirect(`/verify?email=${email}`);
+      try {
+        await sendOTP(email, username, otpCode);
+        req.flash("success", "OTP sent to your email. Please verify.");
+        return res.redirect(`/verify?email=${email}`);
+      } catch (error) {
+        console.log("OTP error: ", error);
+        req.flash("error", "Failed to send OTP");
+        return res.redirect("/signup");
+      }
     });
   } else {
     req.flash("success", "Logged in successfully!");
