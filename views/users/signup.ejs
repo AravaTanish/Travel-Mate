@@ -5,19 +5,35 @@
   </h1>
   <div class="col-lg-6 offset-lg-3 col-md-8 offset-md-2 col-10 offset-1 mb-4">
     <form action="/signup" method="post" class="needs-validation" novalidate>
-      <div class="mb-3">
-        <label for="username" class="form-label">Username</label>
-        <br />
-        <input
-          type="text"
-          name="username"
-          id="username"
-          required
-          placeholder="Enter Username"
-          class="form-control"
-        />
-        <div class="invalid-feedback">Please enter a username.</div>
-        <div class="valid-feedback">Looks good!</div>
+      <div class="row">
+        <div class="mb-3 col-md-6">
+          <label for="first_name" class="form-label">First Name</label>
+          <br />
+          <input
+            type="text"
+            name="first_name"
+            id="first_name"
+            required
+            placeholder="Enter Your First Name"
+            class="form-control"
+          />
+          <div class="invalid-feedback">Please enter your first name.</div>
+          <div class="valid-feedback">Looks good!</div>
+        </div>
+        <div class="mb-3 col-md-6">
+          <label for="last_name" class="form-label">Last Name</label>
+          <br />
+          <input
+            type="text"
+            name="last_name"
+            id="last_name"
+            required
+            placeholder="Enter Your Last Name"
+            class="form-control"
+          />
+          <div class="invalid-feedback">Please enter your last name.</div>
+          <div class="valid-feedback">Looks good!</div>
+        </div>
       </div>
       <div class="mb-3">
         <label for="email" class="form-label">Email</label>

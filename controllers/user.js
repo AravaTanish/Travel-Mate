@@ -23,10 +23,24 @@ function sendOTP(email, username, otpCode) {
     from: process.env.EMAIL_USER,
     to: email,
     subject: "Verify your account",
-    text: `Hello ${username}, your OTP is ${otpCode}. It will expire in 5 minutes.`,
+    text: `Hello user your username is ${username}, your OTP is ${otpCode}. It will expire in 5 minutes.`,
   };
 
   return transporter.sendMail(mail);
+}
+
+//function to create username
+async function generateUniqueUsername(firstName, lastName) {
+  let baseUsername = (firstName + lastName).toLowerCase().replace(/\s+/g, "");
+  let username = baseUsername;
+  let count = 0;
+
+  while (await User.findOne({ username })) {
+    count++;
+    username = baseUsername + count;
+  }
+
+  return username;
 }
 
 //Sign Up
@@ -34,10 +48,15 @@ module.exports.getSignup = (req, res) => {
   res.render("users/signup.ejs");
 };
 
-module.exports.postSignup = async (req, res, next) => {
+module.exports.postSignup = async (req, res) => {
   try {
-    let { username, email, password } = req.body;
-    const newUser = new User({ email: email, username: username });
+    let { first_name, last_name, email, password } = req.body;
+    console.log(first_name, last_name);
+    const username = await generateUniqueUsername(first_name, last_name);
+    const newUser = new User({
+      email: email,
+      username: username,
+    });
     let registeredUser = await User.register(newUser, password);
     const otpCode = generateOTP();
     await OTP.findOneAndDelete({ email });
@@ -82,7 +101,9 @@ module.exports.postLogin = async (req, res) => {
     req.flash("success", "Logged in successfully!");
     if (res.locals.redirectUrl) {
       res.redirect(res.locals.redirectUrl);
-    } else res.redirect("/listings");
+    } else {
+      res.redirect("/listings");
+    }
   }
 };
 

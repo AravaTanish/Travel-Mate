@@ -69,7 +69,33 @@ app.use(flash());
 
 app.use(passport.initialize());
 app.use(passport.session());
-passport.use(new localStrategy(User.authenticate()));
+const LocalStrategy = require("passport-local").Strategy;
+passport.use(
+  new LocalStrategy(
+    {
+      usernameField: "identifier",
+      passwordField: "password",
+    },
+    async (identifier, password, done) => {
+      try {
+        const user = await User.findOne({
+          $or: [{ username: identifier }, { email: identifier }],
+        });
+        if (!user) {
+          return done(null, false, { message: "Incorrect username or email." });
+        }
+        // Use passport-local-mongoose's authenticate method
+        const authResult = await User.authenticate()(user.username, password);
+        if (authResult.error) {
+          return done(null, false, { message: "Incorrect password." });
+        }
+        return done(null, user);
+      } catch (err) {
+        return done(err);
+      }
+    }
+  )
+);
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
