@@ -1,0 +1,112 @@
+<% layout("/layouts/boilerplate.ejs") %>
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-lg-6 col-md-8 col-11">
+      <div class="card shadow-lg p-3 rounded-4 mb-3">
+        <div class="d-flex align-items-center mb-3">
+          <img
+            src="<%= listing.image.url %>"
+            alt="listing image"
+            class="rounded-3"
+            style="
+              width: 90px;
+              height: 90px;
+              object-fit: cover;
+              margin-right: 15px;
+            "
+          />
+          <div>
+            <h5 class="mb-1"><%= listing.title %></h5>
+            <p class="text-muted mb-1">
+              <b>Owner: </b><%= listing.owner.username %>
+            </p>
+            <small class="text-secondary">
+              <b>★ <%= avgRating %></b> &nbsp (<%=no_of_reviews%> reviews)
+            </small>
+          </div>
+        </div>
+        <hr />
+        <h6>Price: <%= listing.price %> / night + GST</h6>
+        <hr />
+        <form
+          action="/<%= listing._id %>/book/payment"
+          novalidate
+          class="needs-validation"
+        >
+          <div class="row">
+            <div class="mb-3 col-6">
+              <label for="startDate" class="form-label"
+                >Select Start Date</label
+              >
+              <input
+                type="date"
+                class="form-control"
+                id="startDate"
+                name="startDate"
+                required
+              />
+              <div class="invalid-feedback">Please select a date.</div>
+              <div class="valid-feedback">Looks good!</div>
+            </div>
+            <div class="mb-3 col-6">
+              <label for="endDate" class="form-label">Select End Date</label>
+              <input
+                type="date"
+                class="form-control"
+                name="endDate"
+                id="endDate"
+                required
+              />
+              <div class="invalid-feedback">Please select a date.</div>
+              <div class="valid-feedback">Looks good!</div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="mb-3 col-6">
+              <label for="adults" class="form-label">Number of Adults</label>
+              <input
+                type="number"
+                class="form-control"
+                name="adults"
+                id="adults"
+                required
+              />
+              <div class="invalid-feedback">
+                Please enter numbers of adults.
+              </div>
+              <div class="valid-feedback">Looks good!</div>
+            </div>
+            <div class="mb-3 col-6">
+              <label for="children" class="form-label"
+                >Number of Children</label
+              >
+              <input
+                type="number"
+                class="form-control"
+                name="children"
+                id="children"
+                required
+              />
+              <div class="invalid-feedback">
+                Please enter numbers of children.
+              </div>
+              <div class="valid-feedback">Looks good!</div>
+            </div>
+          </div>
+          <div class="text-center mt-4">
+            <button class="btn add-btn btn-lg w-100">Confirm Booking</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+  // Get today's date in yyyy-mm-dd format
+  const today = new Date().toISOString().split("T")[0];
+  document.getElementById("startDate").setAttribute("min", today);
+  const curr = new Date();
+  curr.setDate(curr.getDate() + 1); // add 1 day
+  const tomorrow = curr.toISOString().split("T")[0];
+  document.getElementById("endDate").setAttribute("min", tomorrow);
+</script>

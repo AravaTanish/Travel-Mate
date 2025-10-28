@@ -1,15 +1,21 @@
 <% layout("/layouts/boilerplate.ejs") %>
 <div class="row mt-4">
-  <h1 class="col-lg-6 offset-lg-4 col-md-6 offset-md-3 col-8 offset-2 mb-4">
+  <h1 class="col-lg-6 offset-lg-3 col-md-8 offset-md-2 col-10 offset-1 mb-4">
     Verify your email
   </h1>
-  <div class="col-lg-4 offset-lg-4 col-md-6 offset-md-3 col-8 offset-2 mb-4">
+  <div class="col-lg-6 offset-lg-3 col-md-8 offset-md-2 col-10 offset-1 mb-4">
     <% if (locals.error) { %>
     <p style="color: red"><%= error %></p>
     <% } %> <% if (locals.success) { %>
     <p style="color: green"><%= success %></p>
     <% } %>
-    <form action="/verify" method="POST" class="needs-validation" novalidate>
+
+    <form
+      action="/user/verify"
+      method="POST"
+      class="needs-validation"
+      novalidate
+    >
       <p style="color: #fe424d">
         Check your email for OTP and also check in spam folder if not shown in
         inbox.
@@ -21,7 +27,11 @@
         <input class="form-control" type="text" name="otp" required />
         <div class="valid-feedback">Looks good!</div>
       </div>
-      <button class="btn add-btn mb-3" type="submit">Verify</button>
+      <button class="btn add-btn mb-3 col-12" type="submit">Verify OTP</button>
+    </form>
+    <form action="/user/resend-otp" method="POST" class="m-0 ms-sm-auto">
+      <input type="hidden" name="email" value="<%= email %>" />
+      <button type="submit" class="btn">Resend OTP</button>
     </form>
   </div>
 </div>

@@ -12,12 +12,14 @@ const session = require("express-session");
 const MongoStore = require("connect-mongo");
 const flash = require("connect-flash");
 const passport = require("passport");
-const localStrategy = require("passport-local");
+//const localStrategy = require("passport-local");
 const User = require("./models/user.js");
 
 const listingsRouter = require("./routes/listings.js");
 const reviewsRouter = require("./routes/reviews.js");
 const userRouter = require("./routes/user.js");
+const bookingRouter = require("./routes/booking.js");
+const rulesRouter = require("./routes/rules.js");
 
 app.use(methodOverride("_method"));
 app.set("views", path.join(__dirname, "views"));
@@ -108,7 +110,7 @@ app.use((req, res, next) => {
 
 //Home Route
 app.get("/", (req, res) => {
-  res.render("listings/go.ejs");
+  return res.redirect("/listings");
 });
 
 // app.get("/demo", async (req, res) => {
@@ -122,7 +124,9 @@ app.get("/", (req, res) => {
 
 app.use("/listings", listingsRouter);
 app.use("/listings/:id/reviews", reviewsRouter);
-app.use("/", userRouter);
+app.use("/user", userRouter);
+app.use("/:id/book", bookingRouter);
+app.use("/rules", rulesRouter);
 
 app.all("*splat", (req, res, next) => {
   next(new ExpressError(404, "Page Not Found!"));

@@ -30,5 +30,6 @@ router.get("/logout", userController.logout);
 // New OTP verification routes
 router.get("/verify", userController.getVerify);
 router.post("/verify", userController.postVerify);
+router.post("/resend-otp", userController.resendOtp);
 
 module.exports = router;

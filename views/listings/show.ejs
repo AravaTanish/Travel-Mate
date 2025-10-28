@@ -22,6 +22,7 @@
         <p class="card-text"><b>Country: </b><%= listing.country %></p>
       </div>
     </div>
+    <a href="/<%= listing._id %>/book" class="btn edit-btn">Book Now</a>
   </div>
   <% if(currUser && currUser._id.equals(listing.owner._id)) { %>
   <div class="btns">
@@ -35,7 +36,7 @@
     </div>
   </div>
   <% } %>
-  <div class="col-lg-6 offset-lg-3 offset-md-2 offset-1 col-10">
+  <div class="col-lg-8 offset-lg-2 col-10 offset-1">
     <hr />
     <% if(currUser) { %>
     <h4>Leave a Review</h4>
@@ -115,9 +116,14 @@
     <p><b>All Reviews</b></p>
     <div class="row">
       <% for(review of listing.reviews) { %>
-      <div class="card col-10 mb-3 offset-1">
+      <div class="card col-lg-10 offset-lg-1 col-10 offset-1 mb-3">
         <div class="card-body">
-          <h6 class="card-title"><b>@<%= review.author.username %></b></h6>
+          <h6 class="card-title">
+            <b
+              >@<%= review.author ? review.author.username : "Unknown User"
+              %></b
+            >
+          </h6>
           <p
             class="starability-result card-text"
             data-rating="<%= review.rating %>"

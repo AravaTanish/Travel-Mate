@@ -17,10 +17,10 @@
         <a class="nav-link" href="/listings">Explore</a>
         <a class="nav-link" href="/listings/new">Add Your Home</a>
         <% if(!currUser) { %>
-        <a class="nav-link" href="/signup"><b>Sign In</b></a>
-        <a class="nav-link" href="/login"><b>Log In</b></a>
+        <a class="nav-link" href="/user/signup"><b>Sign In</b></a>
+        <a class="nav-link" href="/user/login"><b>Log In</b></a>
         <% } %> <% if(currUser) { %>
-        <a class="nav-link" href="/logout">Log Out</a>
+        <a class="nav-link" href="/user/logout">Log Out</a>
         <% } %>
       </div>
     </div>
