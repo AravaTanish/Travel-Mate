@@ -1,48 +1,28 @@
 const User = require("../models/user.js");
 const OTP = require("../models/otp.js");
-const nodemailer = require("nodemailer");
+const Sib = require("sib-api-v3-sdk");
 
-// Nodemailer setup (explicit SMTP config)
-const transporter = nodemailer.createTransport({
-  host: "smtp.gmail.com",
-  port: 465,
-  secure: true,
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
-  },
-});
+// Initialize Brevo API
+const client = Sib.ApiClient.instance;
+client.authentications["api-key"].apiKey = process.env.BREVO_API_KEY;
+const tranEmailApi = new Sib.TransactionalEmailsApi();
 
-// verify transporter at startup
-transporter
-  .verify()
-  .then(() => console.log("SMTP transporter verified"))
-  .catch((err) => {
-    console.error("SMTP verify failed:", err);
-  });
-
-// function to generate otp
+// Function to generate OTP
 function generateOTP() {
   return Math.floor(100000 + Math.random() * 900000).toString();
 }
 
+// Function to send OTP via Brevo
 async function sendOTP(email, username, otpCode) {
-  const mail = {
-    from: `"Travel Mate" <${process.env.EMAIL_USER}>`,
-    to: email,
-    subject: "Your Travel Mate verification code",
-    text: `Hello ${username},
+  try {
+    const sender = {
+      email: process.env.EMAIL_USER,
+      name: "Travel Mate",
+    };
 
-Your Travel Mate verification code is: ${otpCode}
+    const receivers = [{ email: email }];
 
-This code will expire in 5 minutes.
-
-If you didn't request this, please ignore this email.
-
-Thanks,
-The Travel Mate Team
-`,
-    html: `
+    const htmlContent = `
       <div style="font-family: Arial, sans-serif; color: #111; line-height: 1.4;">
         <div style="max-width:600px; margin:0 auto; padding:24px; border:1px solid #e6e6e6; border-radius:8px;">
           <h2 style="margin:0 0 12px; color:#0b5ed7;">Verify your Travel Mate account</h2>
@@ -69,13 +49,23 @@ The Travel Mate Team
           </p>
         </div>
       </div>
-    `,
-  };
+    `;
 
-  return transporter.sendMail(mail);
+    await tranEmailApi.sendTransacEmail({
+      sender,
+      to: receivers,
+      subject: "Your Travel Mate verification code",
+      htmlContent,
+    });
+
+    console.log(`OTP email sent successfully to ${email}`);
+  } catch (error) {
+    console.error("sendOTP failed:", error);
+    throw error;
+  }
 }
 
-// function to create username
+// Function to create unique username
 async function generateUniqueUsername(firstName, lastName) {
   let baseUsername = (firstName + lastName).toLowerCase().replace(/\s+/g, "");
   let username = baseUsername;
@@ -126,10 +116,9 @@ module.exports.postSignup = async (req, res) => {
 
     try {
       await sendOTP(email, username, otpCode);
-      return res.redirect(`/user/verify?email=${encodeURIComponent(email)}`);
+      return res.redirect(`/user/verify?email=${email}`);
     } catch (mailErr) {
       console.error("sendOTP failed in postSignup:", mailErr);
-      // Cleanup the partially created user and otp entry to avoid orphan accounts
       await User.deleteOne({ _id: registeredUser._id }).catch(() => {});
       await OTP.deleteOne({ email }).catch(() => {});
       req.flash(
@@ -227,11 +216,7 @@ module.exports.postVerify = async (req, res, next) => {
       return res.redirect(`/user/verify?email=${email}`);
     }
 
-    const user = await User.findOneAndUpdate(
-      { email },
-      { verified: true },
-      { new: true }
-    );
+    const user = await User.findOneAndUpdate({ email }, { verified: true });
     await OTP.deleteOne({ email });
 
     req.flash("success", "Email verified! You can now log in.");
@@ -249,7 +234,7 @@ module.exports.postVerify = async (req, res, next) => {
   }
 };
 
-//resend OTP
+// Resend OTP
 module.exports.resendOtp = async (req, res) => {
   try {
     const { email } = req.body;
@@ -259,19 +244,14 @@ module.exports.resendOtp = async (req, res) => {
       return res.redirect("/user/verify");
     }
 
-    // Generate new OTP
     const newOtp = generateOTP();
-
-    // Delete old OTP if exists and save new one
     await OTP.findOneAndDelete({ email });
     const otpEntry = new OTP({ email, otp: newOtp });
     await otpEntry.save();
 
-    // Get username for email template
     const user = await User.findOne({ email });
     const username = user ? user.username : "User";
 
-    // Send email
     await sendOTP(email, username, newOtp);
 
     req.flash("success", "A new OTP has been sent to your email.");
