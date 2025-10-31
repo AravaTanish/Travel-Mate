@@ -22,7 +22,9 @@
         <p class="card-text"><b>Country: </b><%= listing.country %></p>
       </div>
     </div>
-    <a href="/<%= listing._id %>/book" class="btn edit-btn">Book Now</a>
+    <a href="/<%= listing._id %>/book" class="btn edit-btn col-10 offset-1"
+      >Book Now</a
+    >
   </div>
   <% if(currUser && currUser._id.equals(listing.owner._id)) { %>
   <div class="btns">

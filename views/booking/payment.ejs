@@ -1,12 +1,235 @@
 <% layout("/layouts/boilerplate.ejs")%>
-<div class="container text-center my-5">
-  <div class="alert alert-info p-5">
-    <h1 class="display-4 mb-4">🔨 Work in Progress</h1>
-    <p class="lead">
-      This payment page is currently under construction. We're working hard to
-      bring you a seamless payment experience!
-    </p>
-    <hr class="my-4" />
-    <p>Please check back later. Thank you for your patience.</p>
+<h2 class="text-center py-4">Complete Your Booking</h2>
+<!-- Bill Summary Section -->
+<!-- Bill Summary Section -->
+<div class="col-lg-6 offset-lg-3 col-md-8 offset-md-2 col-10 offset-1 mb-4">
+  <div class="card border-0 shadow-lg">
+    <!-- Header -->
+    <div
+      class="card-header text-white text-center py-3"
+      style="
+        background-color: #fe424d;
+        border-top-left-radius: 10px;
+        border-top-right-radius: 10px;
+      "
+    >
+      <h4 class="mb-0 fw-semibold">
+        <i class="bi bi-receipt-cutoff me-2"></i>Bill Summary
+      </h4>
+    </div>
+
+    <!-- Body -->
+    <div class="card-body p-4">
+      <ul class="list-group list-group-flush">
+        <li
+          class="list-group-item d-flex justify-content-between border-0 py-2 gap-3"
+        >
+          <span class="fw-semibold text-muted">No. of Days</span>
+          <strong><%= days %></strong>
+        </li>
+
+        <li
+          class="list-group-item d-flex justify-content-between border-0 py-2 gap-3"
+        >
+          <span class="fw-semibold text-muted">No. of Adults</span>
+          <strong><%= adults %></strong>
+        </li>
+
+        <li
+          class="list-group-item d-flex justify-content-between border-0 py-2 gap-3"
+        >
+          <span class="fw-semibold text-muted">No. of Children</span>
+          <strong><%= children %></strong>
+        </li>
+
+        <li
+          class="list-group-item d-flex justify-content-between border-0 py-2 gap-3"
+        >
+          <span class="fw-semibold text-muted">Price per Day (Adults)</span>
+          <strong>&#8377;<%= listing.price %></strong>
+        </li>
+
+        <li
+          class="list-group-item d-flex justify-content-between border-0 py-2 gap-3"
+        >
+          <span class="fw-semibold text-muted"
+            >Price per Day (Children - 60%)</span
+          >
+          <% totalPriceforChildren = (listing.price * 3) / 5 %>
+          <strong>&#8377;<%= totalPriceforChildren %></strong>
+        </li>
+
+        <li
+          class="list-group-item d-flex justify-content-between border-0 py-2 gap-3"
+        >
+          <span class="fw-semibold text-muted">Total per Day</span>
+          <% total = (listing.price * adults) + (totalPriceforChildren *
+          children) %>
+          <strong class="fs-5">&#8377;<%= total %></strong>
+        </li>
+
+        <li
+          class="list-group-item d-flex justify-content-between border-0 py-2 gap-3"
+        >
+          <span class="fw-semibold text-muted">Total for <%= days %> Days</span>
+          <% totalPerDays = total * days %>
+          <strong class="fs-5">&#8377;<%= totalPerDays %></strong>
+        </li>
+
+        <li
+          class="list-group-item d-flex justify-content-between border-0 py-2 border-top pt-3 gap-3"
+          style="border-color: #eee !important"
+        >
+          <span class="fw-semibold text-dark">Total + GST (18%)</span>
+          <% totalPriceAfterGST = totalPerDays + (18 * totalPerDays) / 100 %>
+          <strong class="fs-4" style="color: #fe424d"
+            >&#8377;<%= totalPriceAfterGST %></strong
+          >
+        </li>
+      </ul>
+
+      <p class="text-muted text-center mt-3 mb-0" style="font-size: 0.9rem">
+        <i class="bi bi-calculator me-1"></i> GST and price calculated
+        automatically.
+      </p>
+    </div>
   </div>
 </div>
+
+<!-- Payment Methods Section -->
+<div class="col-lg-6 offset-lg-3 col-md-8 offset-md-2 col-10 offset-1 mb-4">
+  <div class="card border-0 shadow-lg">
+    <div
+      class="card-header text-white text-center py-3"
+      style="
+        background-color: #fe424d;
+        border-top-left-radius: 10px;
+        border-top-right-radius: 10px;
+      "
+    >
+      <h4 class="mb-0 fw-semibold">
+        <i class="bi bi-credit-card me-2"></i>Secure Payment
+      </h4>
+    </div>
+
+    <div class="card-body p-4">
+      <form id="paymentForm" novalidate class="needs-validation">
+        <div class="mb-4">
+          <label for="paymentMethod" class="form-label fw-semibold"
+            >Choose Payment Method</label
+          >
+          <div class="input-group">
+            <span class="input-group-text bg-light">
+              <i class="bi bi-wallet2 text-danger"></i>
+            </span>
+            <select
+              class="form-select"
+              id="paymentMethod"
+              name="paymentMethod"
+              required
+            >
+              <option value="">-- Select Method --</option>
+              <option value="credit">💳 Credit Card</option>
+              <option value="debit">🏦 Debit Card</option>
+              <option value="upi">📱 UPI</option>
+            </select>
+            <div class="invalid-feedback">Please select a option.</div>
+            <div class="valid-feedback">Looks good!</div>
+          </div>
+        </div>
+
+        <div class="mb-4">
+          <label for="cardNumber" class="form-label fw-semibold"
+            >Card / UPI ID</label
+          >
+          <div class="input-group">
+            <span class="input-group-text bg-light">
+              <i class="bi bi-person-vcard text-danger"></i>
+            </span>
+            <input
+              type="text"
+              class="form-control"
+              id="cardNumber"
+              name="cardNumber"
+              placeholder="Enter your card number or UPI ID"
+              required
+            />
+            <div class="invalid-feedback">Please enter Card/UPI ID.</div>
+            <div class="valid-feedback">Looks good!</div>
+          </div>
+        </div>
+
+        <button
+          type="submit"
+          class="btn w-100 py-2 fw-semibold text-white"
+          style="background-color: #fe424d; border-radius: 10px"
+        >
+          <i class="bi bi-lock-fill me-2"></i>Pay &#8377;<%= totalPriceAfterGST
+          %>
+        </button>
+
+        <p class="text-muted text-center mt-3 mb-0" style="font-size: 0.9rem">
+          <i class="bi bi-shield-check me-1"></i> Your payment is encrypted and
+          100% secure.
+        </p>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Dummy payment -->
+<div
+  class="modal fade"
+  id="paymentModal"
+  tabindex="-1"
+  aria-labelledby="paymentModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content text-center p-4">
+      <div id="loadingSection">
+        <div class="spinner-border text-danger mb-3" role="status"></div>
+        <h5>Processing Payment...</h5>
+      </div>
+      <div id="successSection" class="d-none">
+        <i class="bi bi-check-circle-fill text-success fs-1 mb-3"></i>
+        <h5>Payment Successful!</h5>
+        <p>Redirecting to listings...</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Bootstrap form validation + dummy payment simulation
+  (function () {
+    const form = document.getElementById("paymentForm");
+    form.addEventListener("submit", function (event) {
+      event.preventDefault();
+      event.stopPropagation();
+
+      // Add validation
+      if (!form.checkValidity()) {
+        form.classList.add("was-validated");
+        return;
+      }
+
+      // Show dummy payment modal
+      const modal = new bootstrap.Modal(
+        document.getElementById("paymentModal")
+      );
+      modal.show();
+
+      // Simulate payment process
+      setTimeout(() => {
+        document.getElementById("loadingSection").classList.add("d-none");
+        document.getElementById("successSection").classList.remove("d-none");
+
+        // Redirect after 2 seconds
+        setTimeout(() => {
+          window.location.href = "/listings";
+        }, 2000);
+      }, 2000);
+    });
+  })();
+</script>
